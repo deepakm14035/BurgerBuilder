@@ -15,7 +15,9 @@ class contactData extends Component{
                 validation:{
                     required:true,
                     minLength:5
-                }
+                },
+                valid:false,
+                touched:false
             },
             phoneNo:{
                 type:"input",
@@ -33,7 +35,8 @@ class contactData extends Component{
                     {value:"cheapest", displayName:"Cheapest"}
                 ]
             },
-        }
+        },
+        formIsValid:false
     }
 
     submitContactDetails=()=>{
@@ -59,6 +62,7 @@ class contactData extends Component{
         newObj.value=event.target.value;
         let formObj = {...this.state.orderForm};
         formObj[key]=newObj;
+        //check validity here
         this.setState({orderForm:formObj});
     }
 
@@ -68,8 +72,10 @@ class contactData extends Component{
             return <Input key={key} {...this.state.orderForm[key]} title={key} valueChanged={(event)=>this.valueChanged(event,key)}></Input>;
         });
         let data = (<div>
+            <form suppressContentEditableWarning>
             {formFields}
-            <button onClick={this.submitContactDetails}>submit</button>
+            <button onClick={this.submitContactDetails} disabled={!this.state.formIsValid}>submit</button>
+            </form>
             </div>);
 
             if(this.state.loading){
