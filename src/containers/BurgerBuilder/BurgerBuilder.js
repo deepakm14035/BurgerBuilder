@@ -6,6 +6,8 @@ import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/burger/OrderSummary/OrderSummary';
 import AxiosInstance from '../../axios-orders';
 import WithErrorHandler from '../../hoc/withErrorHandler';
+import {connect} from 'react-redux';
+import * as actionTypes from '../../store/actions';
 
 const INGREDIENT_PRICES={
     cheese:0.5,
@@ -92,4 +94,14 @@ class BurgerBuilder extends Component {
     }
 }
 
-export default WithErrorHandler(BurgerBuilder,AxiosInstance);
+const mapStateToProps = state=>{
+    return {ing:state.ingredients};
+};
+
+const mapDispatchToProps = dispatch=>{
+    return {
+        addIngredient:(ingredientType)=>{return dispatch({type:actionTypes.ADD_INGREDIENT,ingredientType:ingredientType});}
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(WithErrorHandler(BurgerBuilder,AxiosInstance));
