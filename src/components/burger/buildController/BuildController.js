@@ -11,10 +11,11 @@ const controls = [
 const BuildController = (props) =>{
     return (
     <div className={classes.BuildController}>
+        <p>{props.totalPrice}</p>
         {controls.map(ctrl=>{
             return <BuildControl key={ctrl.label} label={ctrl.type} ingredientAdd = {props.ingredientAdd} ingredientSubtract={props.ingredientSubtract}></BuildControl>;
         })}
-        <button onClick={props.ordered}>ORDER NOW</button>
+        <button onClick={props.ordered} disabled={!props.canOrder}>ORDER NOW</button>
     </div>);
 }
 

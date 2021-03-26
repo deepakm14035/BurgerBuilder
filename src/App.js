@@ -3,6 +3,7 @@ import Layout from './components/layout/Layout';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Checkout from './containers/checkout/checkout';
 import {BrowserRouter, Route } from 'react-router-dom';
+import orders from './containers/orders/orders';
 function App() {
   return (
     <BrowserRouter>
@@ -12,6 +13,7 @@ function App() {
       <Checkout></Checkout> */}
       <Route path="/" exact component={BurgerBuilder}></Route>
       <Route path="/checkout" component={Checkout}></Route>
+      <Route path="/orders" component={orders}></Route>
     </div>
     </BrowserRouter>
   );

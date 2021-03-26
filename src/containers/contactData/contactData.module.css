@@ -1,3 +1,9 @@
 .button:disabled{
     color: #cccccc;
 }
+
+.ContactData{
+    margin:20px auto;
+    width: 80%;
+    text-align: center;
+}

@@ -1,6 +1,6 @@
 import Axios from '../../axios-orders';
 import React, {Component} from 'react';
-import { Route } from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
 import CheckoutSummary from '../../components/checkout/checkoutSummary/checkoutSummary';
 import ContactData from '../contactData/contactData';
 class Checkout extends Component{
@@ -22,16 +22,22 @@ class Checkout extends Component{
         console.log(this.props.location.search);
         const query = new URLSearchParams(this.props.location.search);
         const ingredients={};
-        for(let param in query.entries()){
-            console.log(param);
+        console.log("[checkout]"+query.entries());
+        for(let param of query.entries()){
+            console.log("[checkout]"+param);
             ingredients[param[0]]= +param[1];
         } 
-        console.log(ingredients);
+        console.log("[checkout]"+ingredients);
+        this.setState({ingredients:ingredients})
     }
     render(){
+        let summary = <Redirect to="/"/>;
+        if(this.state.ingredients!=null && Object.keys(this.state.ingredients).length>0){
+            summary=(<CheckoutSummary ingredients={this.state.ingredients} onProceedClicked={this.onProceedClicked} onCancel={this.onCancel}/>);
+        }
         return (<div>
             <h1>checkout-</h1>
-            <CheckoutSummary ingredients={this.state.ingredients} onProceedClicked={this.onProceedClicked} onCancel={this.onCancel}/>
+            {summary}
             <Route path={this.props.match.path+'/contactData'} render={()=><ContactData ingredients={this.state.ingredients}></ContactData>}></Route>
         </div>);
     }

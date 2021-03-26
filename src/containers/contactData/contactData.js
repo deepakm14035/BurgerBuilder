@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import Spinner from '../../components/UI/spinner';
 import Axios from '../../axios-orders';
 import Input from '../../components/UI/Input/input';
-
+import  styles  from "./contactData.module.css";
+import withErrorHandler from '../../hoc/withErrorHandler';
+import {connect} from 'react-redux';
+import * as actions from '../../store/actions/order';
+import { Redirect } from 'react-router';
 class contactData extends Component{
     state={
         name:'',
@@ -11,7 +15,8 @@ class contactData extends Component{
         orderForm:{
             name:{
                 type:"input",
-                value:"NAME",
+                inputType:"input",
+                value:"",
                 validation:{
                     required:true,
                     minLength:5
@@ -21,13 +26,15 @@ class contactData extends Component{
             },
             phoneNo:{
                 type:"input",
+                inputType:"input",
                 value:""
             },
             email:{
                 type:"email",
-                value:"email"
+                inputType:"input",
+                value:""
             },
-            phoneNo:{
+            deliveryType:{
                 type:"select",
                 value:"fastest",
                 options:[
@@ -42,28 +49,47 @@ class contactData extends Component{
     submitContactDetails=()=>{
         this.setState({loading:true});
         console.log(this.props.ingredients);
-        Axios.post('/completeData.json',{
+        const orderData = {
             ingredients:this.props.ingredients,
-            name:this.state.name,
-            phoneNo:this.state.phoneNo
+            name:this.state.orderForm.name.value,
+            phoneNo:this.state.orderForm.phoneNo.value,
+            email:this.state.orderForm.email.value
             
-        }).then(res=>{
-            this.setState({loading:false});
-        }).catch(ex=>{
-            this.setState({loading:false});
-        });
+        };
+        // Axios.post('/completeData.json',orderData).then(res=>{
+        //     this.setState({loading:false});
+        // }).catch(ex=>{
+        //     this.setState({loading:false});
+        // });
+
+        this.props.orderBurger(orderData);
     }
 
     checkValidity=()=>{}
 
     valueChanged=(event,key)=>{
-        console.log(event.target.value);
+        //console.log(event.target.value);
         let newObj = {...this.state.orderForm[key]};
         newObj.value=event.target.value;
         let formObj = {...this.state.orderForm};
         formObj[key]=newObj;
         //check validity here
-        this.setState({orderForm:formObj});
+        let isValid=true;
+        for(let i in this.state.orderForm){
+            if(key==i){
+                if(event.target.value.length==0){
+                    isValid=false;
+                    break;
+                }
+            }else{
+                if(this.state.orderForm[i]==0){
+                    isValid=false;
+                    break;
+                }
+            }
+                
+        }
+        this.setState({orderForm:formObj, formIsValid:isValid});
     }
 
     render(){
@@ -71,6 +97,7 @@ class contactData extends Component{
         formFields = Object.keys(this.state.orderForm).map(key=>{
             return <Input key={key} {...this.state.orderForm[key]} title={key} valueChanged={(event)=>this.valueChanged(event,key)}></Input>;
         });
+        const redirectOnPurchase = this.props.purchased?<Redirect to="/"/>:null;
         let data = (<div>
             <form suppressContentEditableWarning>
             {formFields}
@@ -82,9 +109,23 @@ class contactData extends Component{
                 data=<Spinner></Spinner>
             }
 
-        return (<div style={{display:"block", boxShadow:"0 2px 3px #ccc"}}>
+        return (<div className={styles.ContactData} style={{display:"block", boxShadow:"0 2px 3px #ccc"}}>
+            {redirectOnPurchase}
             {data}
         </div>);
     }
 }
-export default contactData;
+const mapStateToProps = state=>{
+    return {ings:state.burgerBuilder.ingredients, 
+        totalPrice:state.burgerBuilder.totalCost,
+        isLoading:state.order.isLoading, 
+        error:state.burgerBuilder.error,
+        purchased:state.order.purchased
+    };
+};
+const mapDispatchToProps = dispatch=>{
+    return {
+        orderBurger:(orderData)=>{return dispatch(actions.purchaseBurger(orderData));}
+    }
+};
+export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(contactData, Axios));
