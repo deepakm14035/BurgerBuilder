@@ -1,3 +1,10 @@
+This project uses -
+CSS for good visuals and animations,
+Redux to manage state data, 
+Axios to communicate with Firebase and store all the orders placed,
+Hooks
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
